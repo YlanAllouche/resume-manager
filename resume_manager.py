@@ -118,14 +118,12 @@ class ResumeManager:
         work_dir = profile_dir / "work"
 
         resume = self._load_json(resume_path)
-        
         work_dir.mkdir(parents=True, exist_ok=True)
         
         if "work" in resume and isinstance(resume["work"], list):
             work_count = len(resume["work"])
             for i, job in enumerate(resume["work"]):
-                job_path = work_dir / f"job{i}.json"
-                self._save_json(job_path, job)
+                self._save_json(work_dir / f"job{i}.json", job)
             
             del resume["work"]
             self._save_json(resume_path, resume)
@@ -135,198 +133,138 @@ class ResumeManager:
 
     def merge_jobs(self, profile: str) -> Dict[str, Any]:
         profile_dir = self.profiles_dir / profile
-        resume_path = profile_dir / "resume.json"
+        resume = self._load_json(profile_dir / "resume.json")
         work_dir = profile_dir / "work"
 
-        resume = self._load_json(resume_path)
-        
         if work_dir.exists():
-            jobs = []
-            for job_file in sorted(work_dir.glob("*.json")):
-                job = self._load_json(job_file)
-                jobs.append(job)
-            
+            jobs = [self._load_json(job_file) for job_file in sorted(work_dir.glob("*.json"))]
             if jobs:
-                jobs.sort(
-                    key=lambda x: x.get("startDate", ""),
-                    reverse=True
-                )
+                jobs.sort(key=lambda x: x.get("startDate", ""), reverse=True)
                 resume["work"] = jobs
         
         return resume
 
-    def build(self, profile: str, language: Optional[str] = None, all_languages: bool = False) -> None:
-        profile_dir = self.profiles_dir / profile
-        
-        if not profile_dir.exists():
-            print(f"Profile '{profile}' not found")
-            return
-        
+    def build(self, profile: Optional[str] = None) -> None:
+        if profile:
+            profile_dir = self.profiles_dir / profile
+            if not profile_dir.exists():
+                print(f"Profile '{profile}' not found")
+                return
+            self._build_profile(profile)
+        else:
+            if self.profiles_dir.exists():
+                for profile_dir in self.profiles_dir.iterdir():
+                    if profile_dir.is_dir():
+                        self._build_profile(profile_dir.name)
+            else:
+                print("No profiles directory found")
+
+    def _build_profile(self, profile: str) -> None:
         resume = self.merge_jobs(profile)
         available_languages = self._get_available_languages(resume)
         
-        if all_languages:
-            languages = sorted(available_languages)
-        elif language:
-            languages = [language]
-        else:
-            languages = ["en"]
-        
-        for lang in languages:
+        for lang in sorted(available_languages):
             self._build_single(profile, resume, lang)
 
     def _build_single(self, profile: str, resume: Dict[str, Any], language: str) -> None:
         available_languages = self._get_available_languages(resume)
         resolved_resume = self._resolve_translations(resume, language, available_languages)
         
-        basics = resolved_resume.get("basics", {})
-        name = basics.get("name", "Resume")
+        name = resolved_resume.get("basics", {}).get("name", "Resume")
         name_parts = name.split()
         
         if len(name_parts) >= 2:
-            first_name = name_parts[0]
             last_name = name_parts[-1]
-        elif len(name_parts) == 1:
             first_name = name_parts[0]
+        elif len(name_parts) == 1:
             last_name = ""
+            first_name = name_parts[0]
         else:
-            first_name = "Resume"
             last_name = ""
+            first_name = "Resume"
         
-        filename = f"{last_name.upper()}-{first_name.upper()}.pdf"
+        filename = f"{last_name.upper()}-{first_name.upper()}"
         output_dir = self.dist_dir / profile / language
         output_path = output_dir / filename
         
         output_dir.mkdir(parents=True, exist_ok=True)
-        
         self._generate_pdf(resolved_resume, output_path)
-        print(f"Built {profile}/{language}/{filename}")
+        print(f"Built {profile}/{language}/{filename}.pdf")
 
     def _generate_pdf(self, resume: Dict[str, Any], output_path: Path) -> None:
+        output_path_abs = output_path.resolve()
+        json_path = output_path_abs.parent / (output_path_abs.name + ".json")
+        
+        self._save_json(json_path, resume)
+        
+        if not self.theme_dir.exists():
+            print(f"Warning: Theme not found at {self.theme_dir}")
+            return
+        
+        theme_relative = "./" + str(self.theme_dir.relative_to(self.base_dir))
+        
         with tempfile.TemporaryDirectory() as temp_dir:
-            temp_dir_path = Path(temp_dir)
-            resume_path = temp_dir_path / "resume.json"
+            resume_path = Path(temp_dir) / "resume.json"
             self._save_json(resume_path, resume)
             
-            if not self.theme_dir.exists():
-                print(f"Warning: Theme directory not found at {self.theme_dir}")
-                print(f"Saving resume JSON only to {output_path}.json")
-                self._save_json(output_path.parent / (output_path.stem + ".json"), resume)
-                return
-            
-            output_path_abs = output_path.resolve()
-            output_path_abs.parent.mkdir(parents=True, exist_ok=True)
-            
-            try:
-                result = subprocess.run(
-                    [
-                        "resume",
-                        "export",
-                        str(output_path_abs),
-                        "--resume",
-                        str(resume_path),
-                        "--theme",
-                        str(self.theme_dir)
-                    ],
-                    cwd=str(self.base_dir),
-                    capture_output=True,
-                    text=True,
-                    timeout=30
-                )
-                
-                if result.returncode != 0:
-                    print(f"Warning: PDF generation failed: {result.stderr}")
-                    self._save_json(output_path_abs.parent / (output_path_abs.stem + ".json"), resume)
-            except FileNotFoundError:
-                print("Warning: 'resume' CLI not found. Using resume-cli via npm.")
+            for cmd in ["resume", "npx"]:
                 try:
+                    cmd_args = ["resume", "export"] if cmd == "resume" else ["npx", "resume-cli", "export"]
                     result = subprocess.run(
-                        [
-                            "npx",
-                            "resume-cli",
-                            "export",
-                            str(output_path_abs),
-                            "--resume",
-                            str(resume_path),
-                            "--theme",
-                            str(self.theme_dir)
+                        cmd_args + [
+                            str(output_path_abs) + ".pdf",
+                            "--resume", str(resume_path),
+                            "--theme", theme_relative
                         ],
                         cwd=str(self.base_dir),
                         capture_output=True,
                         text=True,
-                        timeout=60
+                        timeout=60 if cmd == "npx" else 30
                     )
                     
-                    if result.returncode != 0:
-                        print(f"Warning: PDF generation via npx failed: {result.stderr}")
-                        self._save_json(output_path_abs.parent / (output_path_abs.stem + ".json"), resume)
+                    if result.returncode == 0:
+                        return
+                except FileNotFoundError:
+                    continue
+                except subprocess.TimeoutExpired:
+                    print("Warning: PDF generation timed out")
+                    return
                 except Exception as e:
-                    print(f"Warning: Could not generate PDF: {e}")
-                    self._save_json(output_path_abs.parent / (output_path_abs.stem + ".json"), resume)
-            except subprocess.TimeoutExpired:
-                print("Warning: PDF generation timed out")
-                self._save_json(output_path_abs.parent / (output_path_abs.stem + ".json"), resume)
-            except Exception as e:
-                print(f"Warning: Error during PDF generation: {e}")
-                self._save_json(output_path_abs.parent / (output_path_abs.stem + ".json"), resume)
-
+                    print(f"Warning: PDF generation error: {e}")
+                    return
 
 def main():
-    if len(sys.argv) < 2:
-        print("Usage:")
-        print("  python resume_manager.py split <profile>")
-        print("  python resume_manager.py merge <profile>")
-        print("  python resume_manager.py build <profile> <language>")
-        print("  python resume_manager.py build <profile> --all")
-        print("  python resume_manager.py build --all")
-        sys.exit(1)
-
-    manager = ResumeManager()
-    command = sys.argv[1]
-
-    if command == "split":
+    if len(sys.argv) > 1 and sys.argv[1] in ("split", "merge"):
+        command = sys.argv[1]
         if len(sys.argv) < 3:
-            print("Usage: python resume_manager.py split <profile>")
+            print(f"Usage: python resume_manager.py {command} <profile>")
             sys.exit(1)
+        
         profile = sys.argv[2]
-        manager.split_jobs(profile)
-
-    elif command == "merge":
-        if len(sys.argv) < 3:
-            print("Usage: python resume_manager.py merge <profile>")
-            sys.exit(1)
-        profile = sys.argv[2]
-        resume = manager.merge_jobs(profile)
-        print(json.dumps(resume, indent=2, ensure_ascii=False))
-
-    elif command == "build":
-        if len(sys.argv) < 3:
-            print("Usage:")
-            print("  python resume_manager.py build <profile> <language>")
-            print("  python resume_manager.py build <profile> --all")
-            print("  python resume_manager.py build --all")
-            sys.exit(1)
-
-        if sys.argv[2] == "--all":
-            profiles_dir = manager.profiles_dir
-            if profiles_dir.exists():
-                for profile_dir in profiles_dir.iterdir():
-                    if profile_dir.is_dir():
-                        manager.build(profile_dir.name, all_languages=True)
-            else:
-                print("No profiles directory found")
+        manager = ResumeManager(".")
+        
+        if command == "split":
+            manager.split_jobs(profile)
         else:
-            profile = sys.argv[2]
-            if len(sys.argv) >= 4 and sys.argv[3] == "--all":
-                manager.build(profile, all_languages=True)
-            elif len(sys.argv) >= 4:
-                language = sys.argv[3]
-                manager.build(profile, language=language)
-            else:
-                manager.build(profile, language="en")
-
-    else:
-        print(f"Unknown command: {command}")
+            resume = manager.merge_jobs(profile)
+            print(json.dumps(resume, indent=2, ensure_ascii=False))
+        return
+    
+    location = "."
+    profile = None
+    
+    for i, arg in enumerate(sys.argv[1:], 1):
+        if arg.startswith("--"):
+            if arg == "--profile" and i < len(sys.argv) - 1:
+                profile = sys.argv[i + 1]
+        elif i == 1:
+            location = arg
+    
+    try:
+        manager = ResumeManager(location)
+        manager.build(profile)
+    except Exception as e:
+        print(f"Error: {e}")
         sys.exit(1)
 
 
