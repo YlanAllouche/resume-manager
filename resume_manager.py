@@ -14,7 +14,58 @@ class ResumeManager:
         self.base_dir = Path(base_dir)
         self.profiles_dir = self.base_dir / "profiles"
         self.dist_dir = self.base_dir / "dist"
-        self.theme_dir = self.base_dir / "jsonresume-theme-awesomish"
+        self.theme_dir = self._ensure_theme()
+
+    def _ensure_theme(self) -> Path:
+        theme_dir = self.base_dir / "node_modules" / "jsonresume-theme-awesomish"
+        
+        if theme_dir.exists():
+            return theme_dir
+        
+        print("Theme not found. Cloning jsonresume-theme-awesomish...")
+        
+        try:
+            theme_dir.parent.mkdir(parents=True, exist_ok=True)
+            result = subprocess.run(
+                [
+                    "git",
+                    "clone",
+                    "https://github.com/ylanallouche/jsonresume-theme-awesomish.git",
+                    str(theme_dir)
+                ],
+                capture_output=True,
+                text=True,
+                timeout=60
+            )
+            
+            if result.returncode == 0:
+                print(f"Cloned theme to {theme_dir}")
+                self._install_dependencies(theme_dir)
+                return theme_dir
+            else:
+                print(f"Warning: Clone failed: {result.stderr}")
+        except Exception as e:
+            print(f"Warning: Could not clone theme: {e}")
+        
+        return theme_dir
+
+    def _install_dependencies(self, theme_dir: Path) -> None:
+        for cmd in ["pnpm", "npm"]:
+            try:
+                result = subprocess.run(
+                    [cmd, "install"],
+                    cwd=str(theme_dir),
+                    capture_output=True,
+                    text=True,
+                    timeout=120
+                )
+                if result.returncode == 0:
+                    print(f"Installed dependencies with {cmd}")
+                    return
+            except FileNotFoundError:
+                continue
+            except Exception as e:
+                print(f"Warning: {cmd} install failed: {e}")
 
     def _load_json(self, path: Path) -> Dict[str, Any]:
         with open(path, "r", encoding="utf-8") as f:
