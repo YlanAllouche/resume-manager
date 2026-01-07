@@ -1,0 +1,36 @@
+{
+  "name": "StartupXYZ",
+  "position": {
+    "en": "Backend Developer",
+    "fr": "Développeur Backend"
+  },
+  "url": "https://startupxyz.example.com",
+  "startDate": "2019-07-15",
+  "endDate": "2021-02-28",
+  "summary": {
+    "en": "Built REST APIs and database infrastructure for early-stage SaaS platform",
+    "fr": "Construction d'APIs REST et d'infrastructure de base de données pour une plateforme SaaS en phase de démarrage"
+  },
+  "highlights": [
+    {
+      "en": "Architected PostgreSQL database schema supporting rapid feature development",
+      "fr": "Architecture du schéma de base de données PostgreSQL supportant le développement rapide des fonctionnalités"
+    },
+    {
+      "en": "Developed Python Flask API handling 10K+ daily active users",
+      "fr": "Développement d'une API Flask Python gérant 10K+ utilisateurs actifs quotidiens"
+    },
+    {
+      "en": "Implemented comprehensive API documentation reducing support tickets by 30%",
+      "fr": "Implémentation d'une documentation API complète réduisant les tickets d'assistance de 30%"
+    },
+    {
+      "en": "Collaborated with frontend team to optimize data fetching and reduce client-side latency",
+      "fr": "Collaboration avec l'équipe frontend pour optimiser la récupération de données et réduire la latence côté client"
+    },
+    {
+      "en": "Established best practices for code review and testing, achieving 85% code coverage",
+      "fr": "Établissement des meilleures pratiques pour la révision du code et les tests, atteignant 85% de couverture de code"
+    }
+  ]
+}

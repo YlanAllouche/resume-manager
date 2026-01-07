@@ -1,0 +1,36 @@
+{
+  "name": "Web Solutions Inc",
+  "position": {
+    "en": "Frontend Developer",
+    "fr": "Développeuse Frontend"
+  },
+  "url": "https://websolutions.example.com",
+  "startDate": "2019-08-01",
+  "endDate": "2021-08-31",
+  "summary": {
+    "en": "Developed responsive web applications for SaaS and e-commerce clients",
+    "fr": "Développement d'applications web réactives pour les clients SaaS et e-commerce"
+  },
+  "highlights": [
+    {
+      "en": "Built 15+ responsive web applications using React and Vue.js",
+      "fr": "Construction de 15+ applications web réactives utilisant React et Vue.js"
+    },
+    {
+      "en": "Collaborated with UX designers to implement pixel-perfect designs",
+      "fr": "Collaboration avec les designers UX pour implémenter des designs parfaits au pixel"
+    },
+    {
+      "en": "Improved application performance with lazy loading and code splitting",
+      "fr": "Amélioration des performances de l'application avec chargement différé et fractionnement du code"
+    },
+    {
+      "en": "Implemented responsive design supporting mobile, tablet, and desktop platforms",
+      "fr": "Implémentation d'un design réactif supportant les plateformes mobile, tablette et desktop"
+    },
+    {
+      "en": "Maintained 95% customer satisfaction score across all deployed projects",
+      "fr": "Maintien d'un score de satisfaction client de 95% dans tous les projets déployés"
+    }
+  ]
+}

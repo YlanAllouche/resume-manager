@@ -1,0 +1,13 @@
+{
+  "name": "Tech Corp",
+  "position": {
+    "en": "Senior Backend Engineer",
+    "es": "Ingeniero Backend Senior"
+  },
+  "startDate": "2022-01-15",
+  "endDate": "2024-12-31",
+  "summary": {
+    "en": "Led backend infrastructure improvements",
+    "es": "Lideré mejoras de infraestructura backend"
+  }
+}

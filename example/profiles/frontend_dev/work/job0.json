@@ -1,0 +1,36 @@
+{
+  "name": "Creative Studio Inc.",
+  "position": {
+    "en": "Senior Frontend Engineer & Design Systems Lead",
+    "fr": "Ingénieure Frontend Senior & Leader Système de Design"
+  },
+  "url": "https://creativestudio.example.com",
+  "startDate": "2021-09-01",
+  "endDate": "2024-12-31",
+  "summary": {
+    "en": "Led frontend architecture and design systems for 12-person engineering team serving 8 web applications",
+    "fr": "Leadership de l'architecture frontend et systèmes de design pour une équipe d'ingénierie de 12 personnes servant 8 applications web"
+  },
+  "highlights": [
+    {
+      "en": "Architected and launched comprehensive design system (Storybook) with 120+ accessible components",
+      "fr": "Architecture et lancement d'un système de design complet (Storybook) avec 120+ composants accessibles"
+    },
+    {
+      "en": "Reduced development time by 40% through component reuse and standardization",
+      "fr": "Réduction du temps de développement de 40% grâce à la réutilisation et à la standardisation des composants"
+    },
+    {
+      "en": "Mentored 4 junior developers, with 3 promoted to mid-level roles",
+      "fr": "Mentorat de 4 développeurs juniors, 3 promus à des rôles de niveau intermédiaire"
+    },
+    {
+      "en": "Improved Core Web Vitals scores to 95+ across all applications",
+      "fr": "Amélioration des scores Core Web Vitals à 95+ dans toutes les applications"
+    },
+    {
+      "en": "Established frontend testing standards with 90%+ code coverage",
+      "fr": "Établissement de normes de test frontend avec 90%+ de couverture de code"
+    }
+  ]
+}
