@@ -1,17 +1,15 @@
 #!/usr/bin/env python3
 import json
-import os
 import sys
 import subprocess
 import tempfile
 from pathlib import Path
-from typing import Any, Dict, List, Optional
-import shutil
+from typing import Any, Dict, Optional
 
 
 class ResumeManager:
     def __init__(self, base_dir: str = "."):
-        self.base_dir = Path(base_dir)
+        self.base_dir = Path(base_dir).resolve()
         self.profiles_dir = self.base_dir / "profiles"
         self.dist_dir = self.base_dir / "dist"
         self.theme_dir = self._ensure_theme()
