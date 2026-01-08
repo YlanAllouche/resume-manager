@@ -10,13 +10,15 @@ Tests cover:
 - Handling errors and edge cases
 """
 
+# TODO: Mocking is bad
+
 import json
 import sys
 from pathlib import Path
+from unittest.mock import MagicMock, patch
 
 import pytest
 
-# Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from resume_manager import ResumeManager
@@ -28,11 +30,9 @@ def temp_workspace(tmp_path):
     workspace = tmp_path / "workspace"
     workspace.mkdir()
 
-    # Create profiles directory
     profiles_dir = workspace / "profiles"
     profiles_dir.mkdir()
 
-    # Create backend_dev profile
     backend_dir = profiles_dir / "backend_dev"
     backend_dir.mkdir()
     backend_resume = {
@@ -42,20 +42,23 @@ def temp_workspace(tmp_path):
             "email": "john@example.com",
             "summary": {
                 "en": "Experienced backend developer with Python expertise",
-                "fr": "Développeur backend expérimenté avec expertise en Python"
+                "fr": "Développeur backend expérimenté avec expertise en Python",
             },
-            "location": {"city": "San Francisco", "countryCode": "US"}
+            "location": {"city": "San Francisco", "countryCode": "US"},
         },
         "work": [
             {
                 "name": "Tech Corp",
-                "position": {"en": "Senior Backend Engineer", "fr": "Ingénieur Backend Senior"},
+                "position": {
+                    "en": "Senior Backend Engineer",
+                    "fr": "Ingénieur Backend Senior",
+                },
                 "startDate": "2022-01-15",
                 "endDate": "2024-12-31",
                 "summary": {
                     "en": "Led backend improvements",
-                    "fr": "J'ai dirigé des améliorations"
-                }
+                    "fr": "J'ai dirigé des améliorations",
+                },
             },
             {
                 "name": "StartupXYZ",
@@ -64,29 +67,28 @@ def temp_workspace(tmp_path):
                 "endDate": "2022-01-14",
                 "summary": {
                     "en": "Built RESTful APIs",
-                    "fr": "Construit des APIs RESTful"
-                }
-            }
+                    "fr": "Construit des APIs RESTful",
+                },
+            },
         ],
         "education": [
             {
                 "institution": "University of California",
                 "studyType": "Bachelor",
-                "area": "Computer Science"
+                "area": "Computer Science",
             }
         ],
         "skills": [
             {
                 "name": {"en": "Backend Development", "fr": "Développement Backend"},
                 "level": {"en": "Expert", "fr": "Expert"},
-                "keywords": ["Python", "PostgreSQL"]
+                "keywords": ["Python", "PostgreSQL"],
             }
-        ]
+        ],
     }
     with open(backend_dir / "resume.json", "w") as f:
         json.dump(backend_resume, f, indent=2, ensure_ascii=False)
 
-    # Create frontend_dev profile
     frontend_dir = profiles_dir / "frontend_dev"
     frontend_dir.mkdir()
     frontend_resume = {
@@ -96,20 +98,23 @@ def temp_workspace(tmp_path):
             "email": "jane@example.com",
             "summary": {
                 "en": "Creative frontend developer with React expertise",
-                "fr": "Développeuse frontend créative avec expertise React"
+                "fr": "Développeuse frontend créative avec expertise React",
             },
-            "location": {"city": "New York", "countryCode": "US"}
+            "location": {"city": "New York", "countryCode": "US"},
         },
         "work": [
             {
                 "name": "Creative Studio",
-                "position": {"en": "Lead Frontend Engineer", "fr": "Ingénieure Frontend Leader"},
+                "position": {
+                    "en": "Lead Frontend Engineer",
+                    "fr": "Ingénieure Frontend Leader",
+                },
                 "startDate": "2023-03-01",
                 "endDate": "",
                 "summary": {
                     "en": "Leading frontend team",
-                    "fr": "Diriger l'équipe frontend"
-                }
+                    "fr": "Diriger l'équipe frontend",
+                },
             },
             {
                 "name": "Web Solutions Inc",
@@ -118,29 +123,28 @@ def temp_workspace(tmp_path):
                 "endDate": "2023-02-28",
                 "summary": {
                     "en": "Developed web applications",
-                    "fr": "Développé des applications web"
-                }
-            }
+                    "fr": "Développé des applications web",
+                },
+            },
         ],
         "education": [
             {
                 "institution": "Tech Bootcamp",
                 "studyType": "Certificate",
-                "area": "Full Stack Development"
+                "area": "Full Stack Development",
             }
         ],
         "skills": [
             {
                 "name": {"en": "Frontend Development", "fr": "Développement Frontend"},
                 "level": {"en": "Expert", "fr": "Expert"},
-                "keywords": ["React", "TypeScript"]
+                "keywords": ["React", "TypeScript"],
             }
-        ]
+        ],
     }
     with open(frontend_dir / "resume.json", "w") as f:
         json.dump(frontend_resume, f, indent=2, ensure_ascii=False)
 
-    # Create node_modules directory
     (workspace / "node_modules").mkdir()
 
     return workspace
@@ -150,6 +154,28 @@ def temp_workspace(tmp_path):
 def manager(temp_workspace):
     """Create a ResumeManager instance."""
     return ResumeManager(str(temp_workspace))
+
+
+@pytest.fixture(autouse=True)
+def mock_pdf_generation():
+    """Mock the PDF generation and theme setup to avoid external dependencies."""
+
+    original_generate_pdf = ResumeManager._generate_pdf  # TODO: ?
+
+    def mock_generate_pdf(self, resume, output_path):
+        output_path_abs = output_path.resolve()
+        json_path = output_path_abs.parent / (output_path_abs.name + ".json")
+        self._save_json(json_path, resume)
+
+    def mock_ensure_theme(self):
+        theme_dir = self.base_dir / "node_modules" / "jsonresume-theme-awesomish"
+        theme_dir.mkdir(parents=True, exist_ok=True)
+        return theme_dir
+
+    with patch.object(ResumeManager, "_generate_pdf", mock_generate_pdf), patch.object(
+        ResumeManager, "_ensure_theme", mock_ensure_theme
+    ):
+        yield
 
 
 class TestSplitJobs:
@@ -268,8 +294,12 @@ class TestBuildFunctionality:
         """Test that build creates JSON files."""
         manager.build("backend_dev")
 
-        assert (temp_workspace / "dist" / "backend_dev" / "en" / "SMITH-JOHN.json").exists()
-        assert (temp_workspace / "dist" / "backend_dev" / "fr" / "SMITH-JEAN.json").exists()
+        assert (
+            temp_workspace / "dist" / "backend_dev" / "en" / "SMITH-JOHN.json"
+        ).exists()
+        assert (
+            temp_workspace / "dist" / "backend_dev" / "fr" / "SMITH-JEAN.json"
+        ).exists()
 
     def test_build_json_contains_work_array(self, manager, temp_workspace):
         """Test that built JSON files contain the merged work array."""
@@ -343,7 +373,7 @@ class TestLanguageDetection:
         """Test translation resolution for nested objects."""
         test_obj = {
             "name": {"en": "John", "fr": "Jean"},
-            "position": {"en": "Engineer", "fr": "Ingénieur"}
+            "position": {"en": "Engineer", "fr": "Ingénieur"},
         }
         available_langs = {"en", "fr"}
 
@@ -355,7 +385,7 @@ class TestLanguageDetection:
         """Test translation resolution for arrays."""
         test_obj = [
             {"name": {"en": "John", "fr": "Jean"}},
-            {"name": {"en": "Jane", "fr": "Jeanne"}}
+            {"name": {"en": "Jane", "fr": "Jeanne"}},
         ]
         available_langs = {"en", "fr"}
 
