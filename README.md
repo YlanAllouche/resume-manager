@@ -1,22 +1,42 @@
+
 # JSON Resume Management System
 
 Build tailored resumes for different clients and languages from a single source of truth.
 Split your resume into manageable JSON fragments, then automatically generate every profile/language variant as PDF.
 
+![flow](./flow.gif)
+
 ## Quick Start
+
+
+You can try it by going into the example folder and running:
 
 ```bash
 # Build all profiles with all languages (default)
-python resume_manager.py
+../resume_manager.py
+# Or
+python resume_manager.py # if available in PATH
 
 # Build a specific profile
-python resume_manager.py --profile backend_dev
+resume_manager.py --profile backend_dev
 
 ```
 
+### Nvim based workflow
+
+Make sure you have enabled local config in neovim in your init.lua with:
+
+```lua
+vim.o.exrc = true
+```
+
+Then, opening the example folder and trusting/allowing the local config, you will have autocommands on save for:
+- rerendering all pdf's when modifying a json fragment in the profiles folder
+- rerendering a particular pdf when modifying a json file in the dist folder for one off modification
+
 ## Features
 
-### Translation System
+### Translation 
 Any field in your resume can be either a primitive value or a language-keyed dictionary.
 The script detects which and resolves translations recursively through all nested structures.
 
