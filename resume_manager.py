@@ -4,7 +4,21 @@ import subprocess
 import sys
 import tempfile
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
+
+FRAGMENTABLE_SECTIONS = [
+    "work",
+    "education",
+    "skills",
+    "languages",
+    "certificates",
+    "awards",
+    "volunteer",
+    "publications",
+    "projects",
+    "interests",
+    "references",
+]
 
 
 class ResumeManager:
@@ -124,38 +138,116 @@ class ResumeManager:
         else:
             return obj
 
-    def split_jobs(self, profile: str) -> None:
+    def split_section(self, profile: str, section: str) -> None:
+        """Split an array section into individual JSON files.
+
+        Args:
+            profile: Profile name
+            section: Section name (work, education, skills, etc.)
+        """
+        if section not in FRAGMENTABLE_SECTIONS:
+            print(f"Section '{section}' is not fragmentable")
+            return
+
         profile_dir = self.profiles_dir / profile
         resume_path = profile_dir / "resume.json"
-        work_dir = profile_dir / "work"
+        section_dir = profile_dir / section
 
         resume = self._load_json(resume_path)
-        work_dir.mkdir(parents=True, exist_ok=True)
 
-        if "work" in resume and isinstance(resume["work"], list):
-            work_count = len(resume["work"])
-            for i, job in enumerate(resume["work"]):
-                self._save_json(work_dir / f"job{i}.json", job)
+        if section not in resume:
+            print(f"No '{section}' section found in {profile}/resume.json")
+            return
 
-            del resume["work"]
-            self._save_json(resume_path, resume)
-            print(f"Split {work_count} jobs from {profile}")
-        else:
-            print(f"No work array found in {profile}/resume.json")
+        if not isinstance(resume[section], list):
+            print(f"'{section}' is not an array and cannot be fragmented")
+            return
 
-    def merge_jobs(self, profile: str) -> Dict[str, Any]:
+        section_dir.mkdir(parents=True, exist_ok=True)
+        items = resume[section]
+
+        for i, item in enumerate(items):
+            self._save_json(section_dir / f"{i}.json", item)
+
+        del resume[section]
+        self._save_json(resume_path, resume)
+        print(f"Split {len(items)} items from '{section}' in {profile}")
+
+    def split_all_sections(self, profile: str) -> None:
+        """Split all fragmentable array sections in a profile."""
         profile_dir = self.profiles_dir / profile
-        resume = self._load_json(profile_dir / "resume.json")
-        work_dir = profile_dir / "work"
+        resume_path = profile_dir / "resume.json"
 
-        if work_dir.exists():
-            jobs = [
-                self._load_json(job_file)
-                for job_file in sorted(work_dir.glob("*.json"))
-            ]
-            if jobs:
-                jobs.sort(key=lambda x: x.get("startDate", ""), reverse=True)
-                resume["work"] = jobs
+        if not resume_path.exists():
+            print(f"Profile '{profile}' not found")
+            return
+
+        resume = self._load_json(resume_path)
+
+        if "basics" in resume and isinstance(resume["basics"], dict):
+            basics_path = profile_dir / "basics.json"
+            self._save_json(basics_path, resume["basics"])
+            del resume["basics"]
+            print(f"Extracted 'basics' to basics.json in {profile}")
+
+        for section in FRAGMENTABLE_SECTIONS:
+            if section in resume and isinstance(resume[section], list):
+                section_dir = profile_dir / section
+                section_dir.mkdir(parents=True, exist_ok=True)
+
+                items = resume[section]
+                for i, item in enumerate(items):
+                    self._save_json(section_dir / f"{i}.json", item)
+
+                del resume[section]
+                print(f"Split {len(items)} items from '{section}' in {profile}")
+
+        self._save_json(resume_path, resume)
+
+    def _merge_section(
+        self, profile: str, section: str
+    ) -> Optional[List[Dict[str, Any]]]:
+        """Merge all files in a section folder into an array.
+
+        Returns:
+            List of items in file order, or None if section folder doesn't exist
+        """
+        profile_dir = self.profiles_dir / profile
+        section_dir = profile_dir / section
+
+        if not section_dir.exists():
+            return None
+
+        items = [
+            self._load_json(item_file)
+            for item_file in sorted(section_dir.glob("*.json"), key=lambda x: x.name)
+        ]
+        return items if items else None
+
+    def _merge_all_sections(self, profile: str) -> Dict[str, Any]:
+        """Merge all fragmented sections back into a complete resume.
+
+        Assembles resume from:
+        - basics.json (if exists)
+        - Section folders (work/, education/, skills/, etc.)
+        - resume.json (optional, for non-fragmented fields)
+        """
+        profile_dir = self.profiles_dir / profile
+        resume_path = profile_dir / "resume.json"
+
+        if resume_path.exists():
+            resume = self._load_json(resume_path)
+        else:
+            resume = {}
+
+        basics_path = profile_dir / "basics.json"
+        if basics_path.exists():
+            resume["basics"] = self._load_json(basics_path)
+
+        for section in FRAGMENTABLE_SECTIONS:
+            merged_items = self._merge_section(profile, section)
+            if merged_items is not None:
+                resume[section] = merged_items
 
         return resume
 
@@ -175,7 +267,7 @@ class ResumeManager:
                 print("No profiles directory found")
 
     def _build_profile(self, profile: str) -> None:
-        resume = self.merge_jobs(profile)
+        resume = self._merge_all_sections(profile)
         available_languages = self._get_available_languages(resume)
 
         for lang in sorted(available_languages):
@@ -261,22 +353,6 @@ class ResumeManager:
 
 
 def main():
-    if len(sys.argv) > 1 and sys.argv[1] in ("split", "merge"):
-        command = sys.argv[1]
-        if len(sys.argv) < 3:
-            print(f"Usage: python resume_manager.py {command} <profile>")
-            sys.exit(1)
-
-        profile = sys.argv[2]
-        manager = ResumeManager(".")
-
-        if command == "split":
-            manager.split_jobs(profile)
-        else:
-            resume = manager.merge_jobs(profile)
-            print(json.dumps(resume, indent=2, ensure_ascii=False))
-        return
-
     location = "."
     profile = None
 
