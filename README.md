@@ -2,7 +2,7 @@
 # JSON Resume Management System
 
 Build tailored resumes for different clients and languages from a single source of truth.
-Split your resume into manageable JSON fragments, then automatically generate every profile/language variant as PDF.
+Fragment your resume into organized, manageable JSON files (basics, education, work, skills, etc.), then automatically generate every profile/language variant as PDF.
 
 ![flow](./flow.gif)
 
@@ -68,21 +68,36 @@ Uses pnpm if available otherwise defaults to npm and if neither are present simp
 ## Directory structure to make it work
 
 ```
-├── profiles/ # This is where you work
+├── profiles/                              # This is where you work
 │   ├── backend_dev/
-│   │   ├── resume.json
-│   │   └── work/
-│   │       ├── job0.json
-│   │       └── job1.json
+│   │   ├── basics.json                    # Personal info (name, email, etc.)
+│   │   ├── work/                          # Job experiences
+│   │   │   ├── 0.json
+│   │   │   └── 1.json
+│   │   ├── education/                     # Education history
+│   │   │   ├── 0.json
+│   │   │   └── 1.json
+│   │   ├── skills/                        # Skills
+│   │   │   ├── 0.json
+│   │   │   ├── 1.json
+│   │   │   └── 2.json
+│   │   ├── projects/
+│   │   ├── publications/
+│   │   ├── certificates/
+│   │   ├── awards/
+│   │   ├── volunteer/
+│   │   ├── interests/
+│   │   ├── references/
+│   │   └── languages/
 │   └── frontend_dev/
-│       ├── resume.json
-│       └── work/
-│           └── ...
-├── dist/ # This is the output
+│       ├── basics.json
+│       ├── work/
+│       └── ... (other sections)
+├── dist/                                  # This is the output
 │   ├── backend_dev/
 │   │   ├── en/
 │   │   │   ├── SMITH-JOHN.pdf
-│   │   │   └── SMITH-JOHN.json
+│   │   │   └── SMITH-JOHN.json            # Merged resume for this language
 │   │   └── fr/
 │   │       └── ...
 │   └── ...
@@ -134,47 +149,61 @@ pytest tests/ -v
 
 ## How It Works
 
-1. **Language Detection**: Scans resume structure for dictionaries with 2-letter language codes (en, es, fr, etc.) and primitive values
-2. **Work Merging**: Combines all files from `work/` directory, sorted by `startDate` in descending order
+1. **Language Detection**: Scans resume structure for dictionaries with 2-letter language codes (en, fr, etc.) and primitive values
+2. **Section Merging**: Combines all fragmented sections:
+   - Loads `basics.json` if it exists
+   - Merges all folders (work, education, skills, etc.) in numeric file order
 3. **Translation Resolution**: For each field, checks if it's a translation dict and applies language fallback logic
-4. **PDF Generation**: Merges work files, resolves translations, and generates PDF via resume-cli with the awesomish theme
+4. **PDF Generation**: Merges all sections, resolves translations for the target language, and generates PDF via resume-cli with the awesomish theme
 5. **Naming**: Output files named `LASTNAME-FIRSTNAME.pdf` based on resolved `basics.name` for the target language
 
 
 ## Key Design Decisions
 
+- **Generic Fragmentation**: All top-level array sections use the same fragmentation pattern
+- **Numeric File Order**: Merge order determined by filename (0.json before 1.json, etc.) - users can renumber to reorder
+- **Basics as Special Case**: Single `basics.json` file instead of a folder (it's an object, not an array)
 - **Smart Language Fallbacks**: Missing language → English → any available language
 - **Automatic Theme Setup**: No manual configuration needed
 - **Dual Output**: Every PDF has a matching JSON file with the same name
 - **In-Place Translations**: No separate translation files needed
 - **Default to All**: Builds all languages automatically (no need for `--all` flag)
-- **Simple File Structure**: All `.json` files in `work/` directory are merged, names do not matter
 
-# Legacy features
+## Fragment Management
+
+All JSON Resume array fields can be fragmented into individual files for easier editing and organization:
+
+- **basics**: Stored as `basics.json` (single file, not a folder) - **required**
+- **Array sections**: Each fragmented into a folder with numbered files (optional)
+  - `work/`: Job experiences
+  - `education/`: Education history
+  - `skills/`: Skill entries
+  - `languages/`: Languages
+  - `certificates/`: Certifications
+  - `awards/`: Awards and recognitions
+  - `volunteer/`: Volunteer experiences
+  - `publications/`: Publications and articles
+  - `projects/`: Projects
+  - `interests/`: Interests and hobbies
+  - `references/`: References
+
+### File Organization
+
+- **basics.json**: Required file containing personal information
+- **Section folders**: Create only the folders you need (e.g., if you have no awards, don't create `awards/`)
+- **Numeric naming**: Files within section folders are named `0.json`, `1.json`, `2.json`, etc.
+  - Files are merged in **numeric order** (0 comes before 1, 1 before 2, etc.)
+  - You can use prefixes for readability: `01_main-job.json` sorts before `02_side-project.json`
+- **No resume.json needed**: The build process automatically merges all sections from `basics.json` and section folders
+
+### Usage
+
+The build process automatically merges all fragmented sections during the build phase. Just organize your files in the profile directory and run:
 
 ```bash
-# Split work array into individual job files
-python resume_manager.py split backend_dev
+# Build all profiles with all languages
+python resume_manager.py
 
-# Preview merged resume
-python resume_manager.py merge backend_dev
-```
-
-## Work Section Management
-
-Split your work array into individual job files for easier editing and version control, then merge them back automatically.
-
-- **Split**: `python resume_manager.py split <profile>` → Creates `work/job0.json`, `work/job1.json`, etc.
-- **Merge**: `python resume_manager.py merge <profile>` → Combines all jobs sorted by startDate (newest first)
-
-
-## Manage Work Sections
-
-```bash
-# Split work array into individual files
-python resume_manager.py split backend_dev
-# Creates: profiles/backend_dev/work/job0.json, job1.json, ...
-
-# Preview merged resume with all translations
-python resume_manager.py merge backend_dev | jq '.work'
+# Build a specific profile
+python resume_manager.py --profile backend_dev
 ```
