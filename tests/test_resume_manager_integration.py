@@ -236,8 +236,8 @@ class TestPDFGeneration:
         assert resume["work"][0]["position"] == "Senior Backend Engineer"
 
     def test_integration_split_and_build(self, manager, temp_workspace):
-        """Test the full workflow: split jobs, then build."""
-        manager.split_jobs("backend_dev")
+        """Test the full workflow: split work section, then build."""
+        manager.split_section("backend_dev", "work")
 
         work_dir = temp_workspace / "profiles" / "backend_dev" / "work"
         assert work_dir.exists()

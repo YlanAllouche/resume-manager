@@ -3,19 +3,19 @@
 Comprehensive pytest test suite for the ResumeManager class.
 
 Tests cover:
-- Splitting work sections into individual job files
-- Merging job files back into a work array
+- Splitting array sections into individual files
+- Merging section files back into arrays
 - Building resumes for single and multiple profiles
 - Building resumes for different languages
+- Handling basics.json as a special case
+- Handling optional resume.json
 - Handling errors and edge cases
 """
-
-# TODO: Mocking is bad
 
 import json
 import sys
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
@@ -26,7 +26,7 @@ from resume_manager import ResumeManager
 
 @pytest.fixture
 def temp_workspace(tmp_path):
-    """Create a temporary workspace with profiles and node_modules."""
+    """Create a temporary workspace with fragmented profile examples."""
     workspace = tmp_path / "workspace"
     workspace.mkdir()
 
@@ -35,18 +35,24 @@ def temp_workspace(tmp_path):
 
     backend_dir = profiles_dir / "backend_dev"
     backend_dir.mkdir()
-    backend_resume = {
-        "basics": {
-            "name": {"en": "John Smith", "fr": "Jean Smith"},
-            "label": {"en": "Backend Developer", "fr": "Développeur Backend"},
-            "email": "john@example.com",
-            "summary": {
-                "en": "Experienced backend developer with Python expertise",
-                "fr": "Développeur backend expérimenté avec expertise en Python",
-            },
-            "location": {"city": "San Francisco", "countryCode": "US"},
+
+    basics = {
+        "name": {"en": "John Smith", "fr": "Jean Smith"},
+        "label": {"en": "Backend Developer", "fr": "Développeur Backend"},
+        "email": "john@example.com",
+        "summary": {
+            "en": "Experienced backend developer with Python expertise",
+            "fr": "Développeur backend expérimenté avec expertise en Python",
         },
-        "work": [
+        "location": {"city": "San Francisco", "countryCode": "US"},
+    }
+    with open(backend_dir / "basics.json", "w") as f:
+        json.dump(basics, f, indent=2, ensure_ascii=False)
+
+    work_dir = backend_dir / "work"
+    work_dir.mkdir()
+    with open(work_dir / "0.json", "w") as f:
+        json.dump(
             {
                 "name": "Tech Corp",
                 "position": {
@@ -60,6 +66,13 @@ def temp_workspace(tmp_path):
                     "fr": "J'ai dirigé des améliorations",
                 },
             },
+            f,
+            indent=2,
+            ensure_ascii=False,
+        )
+
+    with open(work_dir / "1.json", "w") as f:
+        json.dump(
             {
                 "name": "StartupXYZ",
                 "position": {"en": "Backend Developer", "fr": "Développeur Backend"},
@@ -70,39 +83,59 @@ def temp_workspace(tmp_path):
                     "fr": "Construit des APIs RESTful",
                 },
             },
-        ],
-        "education": [
+            f,
+            indent=2,
+            ensure_ascii=False,
+        )
+
+    education_dir = backend_dir / "education"
+    education_dir.mkdir()
+    with open(education_dir / "0.json", "w") as f:
+        json.dump(
             {
                 "institution": "University of California",
                 "studyType": "Bachelor",
                 "area": "Computer Science",
-            }
-        ],
-        "skills": [
+            },
+            f,
+            indent=2,
+            ensure_ascii=False,
+        )
+
+    skills_dir = backend_dir / "skills"
+    skills_dir.mkdir()
+    with open(skills_dir / "0.json", "w") as f:
+        json.dump(
             {
                 "name": {"en": "Backend Development", "fr": "Développement Backend"},
                 "level": {"en": "Expert", "fr": "Expert"},
                 "keywords": ["Python", "PostgreSQL"],
-            }
-        ],
-    }
-    with open(backend_dir / "resume.json", "w") as f:
-        json.dump(backend_resume, f, indent=2, ensure_ascii=False)
+            },
+            f,
+            indent=2,
+            ensure_ascii=False,
+        )
 
     frontend_dir = profiles_dir / "frontend_dev"
     frontend_dir.mkdir()
-    frontend_resume = {
-        "basics": {
-            "name": {"en": "Jane Doe", "fr": "Jeanne Doe"},
-            "label": {"en": "Frontend Developer", "fr": "Développeuse Frontend"},
-            "email": "jane@example.com",
-            "summary": {
-                "en": "Creative frontend developer with React expertise",
-                "fr": "Développeuse frontend créative avec expertise React",
-            },
-            "location": {"city": "New York", "countryCode": "US"},
+
+    frontend_basics = {
+        "name": {"en": "Jane Doe", "fr": "Jeanne Doe"},
+        "label": {"en": "Frontend Developer", "fr": "Développeuse Frontend"},
+        "email": "jane@example.com",
+        "summary": {
+            "en": "Creative frontend developer with React expertise",
+            "fr": "Développeuse frontend créative avec expertise React",
         },
-        "work": [
+        "location": {"city": "New York", "countryCode": "US"},
+    }
+    with open(frontend_dir / "basics.json", "w") as f:
+        json.dump(frontend_basics, f, indent=2, ensure_ascii=False)
+
+    frontend_work_dir = frontend_dir / "work"
+    frontend_work_dir.mkdir()
+    with open(frontend_work_dir / "0.json", "w") as f:
+        json.dump(
             {
                 "name": "Creative Studio",
                 "position": {
@@ -116,6 +149,13 @@ def temp_workspace(tmp_path):
                     "fr": "Diriger l'équipe frontend",
                 },
             },
+            f,
+            indent=2,
+            ensure_ascii=False,
+        )
+
+    with open(frontend_work_dir / "1.json", "w") as f:
+        json.dump(
             {
                 "name": "Web Solutions Inc",
                 "position": {"en": "Frontend Developer", "fr": "Développeuse Frontend"},
@@ -126,24 +166,38 @@ def temp_workspace(tmp_path):
                     "fr": "Développé des applications web",
                 },
             },
-        ],
-        "education": [
+            f,
+            indent=2,
+            ensure_ascii=False,
+        )
+
+    frontend_education_dir = frontend_dir / "education"
+    frontend_education_dir.mkdir()
+    with open(frontend_education_dir / "0.json", "w") as f:
+        json.dump(
             {
                 "institution": "Tech Bootcamp",
                 "studyType": "Certificate",
                 "area": "Full Stack Development",
-            }
-        ],
-        "skills": [
+            },
+            f,
+            indent=2,
+            ensure_ascii=False,
+        )
+
+    frontend_skills_dir = frontend_dir / "skills"
+    frontend_skills_dir.mkdir()
+    with open(frontend_skills_dir / "0.json", "w") as f:
+        json.dump(
             {
                 "name": {"en": "Frontend Development", "fr": "Développement Frontend"},
                 "level": {"en": "Expert", "fr": "Expert"},
                 "keywords": ["React", "TypeScript"],
-            }
-        ],
-    }
-    with open(frontend_dir / "resume.json", "w") as f:
-        json.dump(frontend_resume, f, indent=2, ensure_ascii=False)
+            },
+            f,
+            indent=2,
+            ensure_ascii=False,
+        )
 
     (workspace / "node_modules").mkdir()
 
@@ -159,8 +213,6 @@ def manager(temp_workspace):
 @pytest.fixture(autouse=True)
 def mock_pdf_generation():
     """Mock the PDF generation and theme setup to avoid external dependencies."""
-
-    original_generate_pdf = ResumeManager._generate_pdf  # TODO: ?
 
     def mock_generate_pdf(self, resume, output_path):
         output_path_abs = output_path.resolve()
@@ -178,101 +230,48 @@ def mock_pdf_generation():
         yield
 
 
-class TestSplitJobs:
-    """Tests for splitting work sections."""
+class TestMergeSection:
+    """Tests for merging section files."""
 
-    def test_split_single_profile(self, manager, temp_workspace):
-        """Test splitting work section of a single profile."""
-        manager.split_jobs("backend_dev")
+    def test_merge_work_section(self, manager):
+        """Test merging work files back into an array."""
+        merged_items = manager._merge_section("backend_dev", "work")
 
-        work_dir = temp_workspace / "profiles" / "backend_dev" / "work"
-        assert work_dir.exists()
+        assert merged_items is not None
+        assert len(merged_items) == 2
+        assert merged_items[0]["name"] in ["Tech Corp", "StartupXYZ"]
 
-        job_files = sorted(work_dir.glob("*.json"))
-        assert len(job_files) == 2
+    def test_merge_nonexistent_section(self, manager):
+        """Test merging when section folder doesn't exist."""
+        result = manager._merge_section("backend_dev", "nonexistent")
+        assert result is None
 
-        assert (work_dir / "job0.json").exists()
-        assert (work_dir / "job1.json").exists()
+    def test_merge_all_sections_without_resume_json(self, manager):
+        """Test merging all fragmented sections without resume.json file."""
+        merged_resume = manager._merge_all_sections("backend_dev")
 
-        resume_path = temp_workspace / "profiles" / "backend_dev" / "resume.json"
-        with open(resume_path) as f:
-            resume = json.load(f)
-        assert "work" not in resume
-
-    def test_split_preserves_job_data(self, manager, temp_workspace):
-        """Test that split preserves job data correctly."""
-        manager.split_jobs("backend_dev")
-
-        work_dir = temp_workspace / "profiles" / "backend_dev" / "work"
-        with open(work_dir / "job0.json") as f:
-            job0 = json.load(f)
-
-        assert "name" in job0
-        assert "position" in job0
-        assert job0["name"] == "Tech Corp"
-
-    def test_split_multiple_profiles(self, manager, temp_workspace):
-        """Test splitting multiple profiles."""
-        manager.split_jobs("backend_dev")
-        manager.split_jobs("frontend_dev")
-
-        backend_work_dir = temp_workspace / "profiles" / "backend_dev" / "work"
-        assert len(list(backend_work_dir.glob("*.json"))) == 2
-
-        frontend_work_dir = temp_workspace / "profiles" / "frontend_dev" / "work"
-        assert len(list(frontend_work_dir.glob("*.json"))) == 2
-
-    def test_split_nonexistent_profile_fails(self, manager):
-        """Test that splitting a nonexistent profile fails."""
-        with pytest.raises(FileNotFoundError):
-            manager.split_jobs("nonexistent_profile")
-
-
-class TestMergeJobs:
-    """Tests for merging job files."""
-
-    def test_merge_single_profile(self, manager, temp_workspace):
-        """Test merging work files back into a work array."""
-        manager.split_jobs("backend_dev")
-        merged_resume = manager.merge_jobs("backend_dev")
-
+        assert "basics" in merged_resume
+        assert merged_resume["basics"]["name"]["en"] == "John Smith"
         assert "work" in merged_resume
         assert len(merged_resume["work"]) == 2
-        assert merged_resume["work"][0]["name"] in ["Tech Corp", "StartupXYZ"]
+        assert "education" in merged_resume
+        assert len(merged_resume["education"]) == 1
+        assert "skills" in merged_resume
+        assert len(merged_resume["skills"]) == 1
 
-    def test_merge_preserves_job_order_by_date(self, manager, temp_workspace):
-        """Test that merge orders jobs by start date (newest first)."""
-        manager.split_jobs("backend_dev")
-        merged_resume = manager.merge_jobs("backend_dev")
+    def test_merge_basics_from_file(self, manager):
+        """Test that basics.json is properly loaded when merging."""
+        merged_resume = manager._merge_all_sections("backend_dev")
 
-        work = merged_resume["work"]
-        assert work[0]["name"] == "Tech Corp"
-        assert work[1]["name"] == "StartupXYZ"
-
-    def test_merge_without_split(self, manager):
-        """Test merging when work section hasn't been split."""
-        merged_resume = manager.merge_jobs("backend_dev")
-
-        assert "work" in merged_resume
-        assert len(merged_resume["work"]) == 2
-
-    def test_merge_empty_work_directory(self, manager, temp_workspace):
-        """Test merging when work directory is empty."""
-        manager.split_jobs("backend_dev")
-
-        work_dir = temp_workspace / "profiles" / "backend_dev" / "work"
-        for job_file in work_dir.glob("*.json"):
-            job_file.unlink()
-
-        merged_resume = manager.merge_jobs("backend_dev")
-        assert "work" not in merged_resume or len(merged_resume.get("work", [])) == 0
+        assert merged_resume["basics"]["name"]["en"] == "John Smith"
+        assert merged_resume["basics"]["label"]["fr"] == "Développeur Backend"
 
 
 class TestBuildFunctionality:
     """Tests for building resumes."""
 
-    def test_build_single_profile(self, manager, temp_workspace):
-        """Test building a single profile."""
+    def test_build_single_profile_no_resume_json(self, manager, temp_workspace):
+        """Test building a single profile without resume.json file."""
         manager.build("backend_dev")
 
         dist_dir = temp_workspace / "dist" / "backend_dev"
@@ -301,16 +300,19 @@ class TestBuildFunctionality:
             temp_workspace / "dist" / "backend_dev" / "fr" / "SMITH-JEAN.json"
         ).exists()
 
-    def test_build_json_contains_work_array(self, manager, temp_workspace):
-        """Test that built JSON files contain the merged work array."""
+    def test_build_json_contains_all_sections(self, manager, temp_workspace):
+        """Test that built JSON files contain all merged sections."""
         manager.build("backend_dev")
 
         json_path = temp_workspace / "dist" / "backend_dev" / "en" / "SMITH-JOHN.json"
         with open(json_path) as f:
             resume = json.load(f)
 
+        assert "basics" in resume
         assert "work" in resume
         assert len(resume["work"]) == 2
+        assert "education" in resume
+        assert "skills" in resume
 
     def test_build_resolves_translations(self, manager, temp_workspace):
         """Test that build correctly resolves translations."""
@@ -337,9 +339,7 @@ class TestLanguageDetection:
 
     def test_get_available_languages(self, manager):
         """Test detection of available languages."""
-        resume = manager._load_json(
-            Path(manager.base_dir) / "profiles" / "backend_dev" / "resume.json"
-        )
+        resume = manager._merge_all_sections("backend_dev")
 
         languages = manager._get_available_languages(resume)
         assert "en" in languages
