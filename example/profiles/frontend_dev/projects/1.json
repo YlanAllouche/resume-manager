@@ -1,0 +1,27 @@
+{
+  "name": {
+    "en": "Performance Optimization Dashboard",
+    "fr": "Tableau de Bord d'Optimisation des Performances"
+  },
+  "startDate": "2022-01-15",
+  "endDate": "2023-06-30",
+  "description": {
+    "en": "Developed real-time dashboard for monitoring and optimizing web performance metrics across 50+ applications",
+    "fr": "Développement d'un tableau de bord en temps réel pour surveiller et optimiser les métriques de performance Web dans plus de 50 applications"
+  },
+  "highlights": [
+    {
+      "en": "Improved average page load time by 45% across tracked applications",
+      "fr": "Amélioration du temps de chargement moyen des pages de 45% dans les applications suivies"
+    },
+    {
+      "en": "Built with Next.js, Chart.js, and real-time WebSocket updates",
+      "fr": "Construit avec Next.js, Chart.js et mises à jour WebSocket en temps réel"
+    },
+    {
+      "en": "Reduced Core Web Vitals issues by 60%",
+      "fr": "Réduction des problèmes de Web Vitals essentiels de 60%"
+    }
+  ],
+  "url": "https://github.com/janedoe/perf-dashboard"
+}

@@ -1,0 +1,7 @@
+{
+  "name": {
+    "en": "Open Source",
+    "fr": "Logiciel Libre"
+  },
+  "keywords": ["Kubernetes", "Docker", "PostgreSQL", "Redis"]
+}

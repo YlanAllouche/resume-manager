@@ -1,0 +1,21 @@
+{
+  "institution": "General Assembly",
+  "url": "https://www.generalassemb.ly",
+  "area": {
+    "en": "Web Development Immersive",
+    "fr": "Immersive Développement Web"
+  },
+  "studyType": {
+    "en": "Professional Certificate",
+    "fr": "Certificat Professionnel"
+  },
+  "startDate": "2019-06-01",
+  "endDate": "2019-09-15",
+  "score": "98",
+  "courses": [
+    "JavaScript Fundamentals",
+    "React.js",
+    "Full Stack Web Development",
+    "Project Management"
+  ]
+}

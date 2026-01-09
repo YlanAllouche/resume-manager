@@ -1,0 +1,12 @@
+{
+  "name": {
+    "en": "Web Performance",
+    "fr": "Performance Web"
+  },
+  "keywords": [
+    "Core Web Vitals",
+    "Bundle Optimization",
+    "Image Optimization",
+    "Caching Strategies"
+  ]
+}

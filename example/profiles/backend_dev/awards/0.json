@@ -1,0 +1,12 @@
+{
+  "title": {
+    "en": "Employee of the Year",
+    "fr": "Employé de l'Année"
+  },
+  "date": "2023-12-01",
+  "awarder": "Tech Corp Inc.",
+  "summary": {
+    "en": "Recognition for exceptional contributions to infrastructure modernization and team leadership",
+    "fr": "Reconnaissance pour les contributions exceptionnelles à la modernisation de l'infrastructure et au leadership d'équipe"
+  }
+}

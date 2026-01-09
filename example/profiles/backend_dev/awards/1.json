@@ -1,0 +1,12 @@
+{
+  "title": {
+    "en": "Innovation Award",
+    "fr": "Prix de l'Innovation"
+  },
+  "date": "2022-06-15",
+  "awarder": "Tech Corp Inc.",
+  "summary": {
+    "en": "For developing an automated deployment pipeline that reduced deployment time by 80%",
+    "fr": "Pour le développement d'un pipeline de déploiement automatisé qui a réduit le temps de déploiement de 80%"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": {
+    "en": "Scaling PostgreSQL to 100K Queries Per Second",
+    "fr": "Augmenter PostgreSQL à 100K Requêtes Par Seconde"
+  },
+  "publisher": "Tech Blog Monthly",
+  "releaseDate": "2023-08-15",
+  "url": "https://techblog.example.com/postgres-scaling",
+  "summary": {
+    "en": "A comprehensive guide on optimizing PostgreSQL for high-throughput applications with real-world benchmarks",
+    "fr": "Un guide complet sur l'optimisation de PostgreSQL pour les applications à haut débit avec des benchmarks du monde réel"
+  }
+}

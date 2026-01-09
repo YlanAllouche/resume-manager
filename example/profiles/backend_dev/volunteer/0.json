@@ -1,0 +1,28 @@
+{
+  "organization": "Code for Good Foundation",
+  "position": {
+    "en": "Technical Mentor",
+    "fr": "Mentor Technique"
+  },
+  "url": "https://codeforgood.org",
+  "startDate": "2021-01-01",
+  "endDate": "2023-12-31",
+  "summary": {
+    "en": "Mentored 15+ junior developers in backend development best practices and system design",
+    "fr": "Mentorat de plus de 15 développeurs junior dans les meilleures pratiques de développement backend et la conception de systèmes"
+  },
+  "highlights": [
+    {
+      "en": "Created comprehensive curriculum for backend development",
+      "fr": "Création d'un programme complet pour le développement backend"
+    },
+    {
+      "en": "Organized monthly workshops on microservices architecture",
+      "fr": "Organisation d'ateliers mensuels sur l'architecture des microservices"
+    },
+    {
+      "en": "Helped 8 mentees secure their first backend developer positions",
+      "fr": "Aide à 8 mentorés à décrocher leurs premiers postes de développeur backend"
+    }
+  ]
+}

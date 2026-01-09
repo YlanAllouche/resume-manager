@@ -1,0 +1,17 @@
+{
+  "name": {
+    "en": "Frontend Frameworks",
+    "fr": "Frameworks Frontend"
+  },
+  "level": {
+    "en": "Expert",
+    "fr": "Expert"
+  },
+  "keywords": [
+    "React",
+    "Vue.js",
+    "Next.js",
+    "Svelte",
+    "Angular"
+  ]
+}

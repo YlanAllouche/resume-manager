@@ -1,0 +1,11 @@
+{
+  "name": {
+    "en": "Distributed Systems",
+    "fr": "Systèmes Distribués"
+  },
+  "keywords": [
+    "Consensus Algorithms",
+    "Distributed Databases",
+    "Fault Tolerance"
+  ]
+}

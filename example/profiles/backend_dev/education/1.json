@@ -1,0 +1,19 @@
+{
+  "institution": "Coursera",
+  "url": "https://www.coursera.org",
+  "area": {
+    "en": "Cloud Architecture",
+    "fr": "Architecture Cloud"
+  },
+  "studyType": {
+    "en": "Professional Certificate",
+    "fr": "Certificat Professionnel"
+  },
+  "startDate": "2021-01-01",
+  "endDate": "2021-06-30",
+  "score": "95",
+  "courses": [
+    "Preparing for Google Cloud Professional Cloud Architect",
+    "Cloud Infrastructure and Design Principles"
+  ]
+}

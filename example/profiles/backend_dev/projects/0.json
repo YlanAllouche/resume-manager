@@ -1,0 +1,27 @@
+{
+  "name": {
+    "en": "Real-time Data Pipeline",
+    "fr": "Pipeline de Données en Temps Réel"
+  },
+  "startDate": "2022-06-01",
+  "endDate": "2023-12-31",
+  "description": {
+    "en": "Built a distributed data processing pipeline handling 1M+ events per second using Kafka, Apache Flink, and PostgreSQL",
+    "fr": "Construction d'un pipeline de traitement de données distribué traitant plus d'1M d'événements par seconde utilisant Kafka, Apache Flink et PostgreSQL"
+  },
+  "highlights": [
+    {
+      "en": "Achieved 99.99% uptime with automatic failover mechanisms",
+      "fr": "Atteint 99,99% de disponibilité avec mécanismes de basculement automatique"
+    },
+    {
+      "en": "Reduced latency from 5 seconds to 200ms with optimized event processing",
+      "fr": "Réduction de la latence de 5 secondes à 200ms avec traitement d'événements optimisé"
+    },
+    {
+      "en": "Mentored 4 engineers on distributed systems concepts",
+      "fr": "Mentorat de 4 ingénieurs sur les concepts des systèmes distribués"
+    }
+  ],
+  "url": "https://github.com/johnsmith/realtime-pipeline"
+}

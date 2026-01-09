@@ -1,0 +1,13 @@
+{
+  "name": {
+    "en": "Microservices Anti-Patterns and How to Avoid Them",
+    "fr": "Anti-Modèles de Microservices et Comment les Éviter"
+  },
+  "publisher": "System Architecture Quarterly",
+  "releaseDate": "2023-03-01",
+  "url": "https://sysarch.example.com/microservices-antipatterns",
+  "summary": {
+    "en": "Analysis of common mistakes in microservices implementation and practical solutions",
+    "fr": "Analyse des erreurs courantes dans l'implémentation des microservices et solutions pratiques"
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "name": {
+    "en": "Jane Doe",
+    "fr": "Jeanne Doe"
+  },
+  "label": {
+    "en": "Senior Frontend Developer",
+    "fr": "Développeuse Frontend Senior"
+  },
+  "image": "https://avatars.example.com/jane-doe.jpg",
+  "email": "jane.doe@example.com",
+  "phone": "+1 (212) 555-7890",
+  "url": "https://janedoe.design",
+  "summary": {
+    "en": "Creative and detail-oriented frontend developer with 7+ years of experience building responsive, accessible web applications. Passionate about modern web technologies, UI/UX best practices, and mentoring junior developers.",
+    "fr": "Développeuse frontend créative et attentives aux détails avec plus de 7 ans d'expérience dans la construction d'applications web réactives et accessibles. Passionnée par les technologies web modernes, les bonnes pratiques UI/UX et le mentorat des développeurs juniors."
+  },
+  "location": {
+    "address": "456 Park Avenue South",
+    "postalCode": "NY 10010",
+    "city": {
+      "en": "New York",
+      "fr": "New York"
+    },
+    "countryCode": "US",
+    "region": {
+      "en": "New York",
+      "fr": "New York"
+    }
+  },
+  "profiles": [
+    {
+      "network": "GitHub",
+      "username": "janedoe",
+      "url": "https://github.com/janedoe"
+    },
+    {
+      "network": "LinkedIn",
+      "username": "janedoe",
+      "url": "https://linkedin.com/in/janedoe"
+    },
+    {
+      "network": "Dribbble",
+      "username": "janedoe",
+      "url": "https://dribbble.com/janedoe"
+    },
+    {
+      "network": "CodePen",
+      "username": "janedoe",
+      "url": "https://codepen.io/janedoe"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "name": {
+    "en": "Component Library - UI Kit",
+    "fr": "Bibliothèque de Composants - UI Kit"
+  },
+  "startDate": "2021-06-01",
+  "endDate": "2024-12-31",
+  "description": {
+    "en": "Built and maintained a comprehensive accessible component library serving 12 internal teams and 10K+ developers worldwide",
+    "fr": "Construction et maintenance d'une bibliothèque de composants accessible complète servant 12 équipes internes et plus de 10K développeurs dans le monde"
+  },
+  "highlights": [
+    {
+      "en": "100% WCAG 2.1 AA compliant with comprehensive keyboard navigation",
+      "fr": "100% conforme à WCAG 2.1 AA avec navigation complète au clavier"
+    },
+    {
+      "en": "3M+ npm downloads with 98% user satisfaction",
+      "fr": "Plus de 3M de téléchargements npm avec 98% de satisfaction utilisateur"
+    },
+    {
+      "en": "Built with React, TypeScript, Storybook, and comprehensive testing",
+      "fr": "Construit avec React, TypeScript, Storybook et tests complets"
+    },
+    {
+      "en": "Extensive documentation and accessibility audit reports",
+      "fr": "Documentation extensive et rapports d'audit d'accessibilité"
+    }
+  ],
+  "url": "https://github.com/janedoe/ui-kit"
+}

@@ -1,0 +1,48 @@
+{
+  "name": {
+    "en": "John Smith",
+    "fr": "Jean Smith"
+  },
+  "label": {
+    "en": "Senior Backend Developer",
+    "fr": "Développeur Backend Senior"
+  },
+  "image": "https://avatars.example.com/john-smith.jpg",
+  "email": "john.smith@example.com",
+  "phone": "+1 (415) 555-4321",
+  "url": "https://johnsmith.dev",
+  "summary": {
+    "en": "Experienced backend developer with 8+ years of expertise in Python, Node.js, and cloud infrastructure. Proven track record of designing and implementing scalable systems that serve millions of users.",
+    "fr": "Développeur backend expérimenté avec plus de 8 ans d'expertise en Python, Node.js et infrastructure cloud. Bilan prouvé de conception et implémentation de systèmes évolutifs servant des millions d'utilisateurs."
+  },
+  "location": {
+    "address": "123 Tech Boulevard",
+    "postalCode": "CA 94102",
+    "city": {
+      "en": "San Francisco",
+      "fr": "Saint Francis"
+    },
+    "countryCode": "US",
+    "region": {
+      "en": "California",
+      "fr": "Californie"
+    }
+  },
+  "profiles": [
+    {
+      "network": "GitHub",
+      "username": "johnsmith",
+      "url": "https://github.com/johnsmith"
+    },
+    {
+      "network": "LinkedIn",
+      "username": "johnsmith",
+      "url": "https://linkedin.com/in/johnsmith"
+    },
+    {
+      "network": "Twitter",
+      "username": "johnsmith_dev",
+      "url": "https://twitter.com/johnsmith_dev"
+    }
+  ]
+}

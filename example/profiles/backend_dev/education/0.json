@@ -1,0 +1,21 @@
+{
+  "institution": "University of California, Berkeley",
+  "url": "https://www.berkeley.edu",
+  "area": {
+    "en": "Computer Science",
+    "fr": "Informatique"
+  },
+  "studyType": {
+    "en": "Bachelor of Science",
+    "fr": "Licence"
+  },
+  "startDate": "2016-09-01",
+  "endDate": "2020-05-31",
+  "score": "3.8",
+  "courses": [
+    "CS161 - Computer Security",
+    "CS188 - Artificial Intelligence",
+    "CS170 - Efficient Algorithms and Intractable Problems",
+    "CS186 - Database Systems"
+  ]
+}

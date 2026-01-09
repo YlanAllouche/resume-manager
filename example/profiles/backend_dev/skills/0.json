@@ -1,0 +1,19 @@
+{
+  "name": {
+    "en": "Backend Development",
+    "fr": "Développement Backend"
+  },
+  "level": {
+    "en": "Expert",
+    "fr": "Expert"
+  },
+  "keywords": [
+    "Python",
+    "Node.js",
+    "Go",
+    "Java",
+    "REST APIs",
+    "GraphQL",
+    "Microservices"
+  ]
+}

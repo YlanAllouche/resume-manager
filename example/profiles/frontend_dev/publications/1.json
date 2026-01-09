@@ -1,0 +1,13 @@
+{
+  "name": {
+    "en": "The Future of CSS: Modern Approaches to Styling",
+    "fr": "L'Avenir du CSS: Approches Modernes du Styling"
+  },
+  "publisher": "Frontend Focus Magazine",
+  "releaseDate": "2023-03-15",
+  "url": "https://frontendfocus.io/styling-future",
+  "summary": {
+    "en": "Analysis of CSS-in-JS, utility-first CSS, and modern styling paradigms",
+    "fr": "Analyse du CSS-en-JS, CSS d'utilité d'abord et des paradigmes de style modernes"
+  }
+}

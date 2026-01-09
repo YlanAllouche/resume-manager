@@ -1,0 +1,27 @@
+{
+  "name": {
+    "en": "Open Source API Framework",
+    "fr": "Framework API Open Source"
+  },
+  "startDate": "2020-01-01",
+  "endDate": "2023-12-31",
+  "description": {
+    "en": "Developed and maintained FastAPI middleware library with 5K+ GitHub stars",
+    "fr": "Développement et maintenance d'une bibliothèque middleware FastAPI avec plus de 5K étoiles GitHub"
+  },
+  "highlights": [
+    {
+      "en": "1M+ weekly npm/PyPI downloads",
+      "fr": "Plus d'1M de téléchargements hebdomadaires npm/PyPI"
+    },
+    {
+      "en": "Contributions from 50+ open source developers",
+      "fr": "Contributions de plus de 50 développeurs open source"
+    },
+    {
+      "en": "Featured in major tech publications",
+      "fr": "Présenté dans les principales publications technologiques"
+    }
+  ],
+  "url": "https://github.com/johnsmith/api-framework"
+}

@@ -1,0 +1,19 @@
+{
+  "name": {
+    "en": "Cloud & DevOps",
+    "fr": "Cloud & DevOps"
+  },
+  "level": {
+    "en": "Advanced",
+    "fr": "Avancé"
+  },
+  "keywords": [
+    "AWS",
+    "Google Cloud",
+    "Docker",
+    "Kubernetes",
+    "Terraform",
+    "CI/CD",
+    "GitHub Actions"
+  ]
+}

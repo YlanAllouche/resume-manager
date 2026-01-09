@@ -1,0 +1,19 @@
+{
+  "name": {
+    "en": "Development Tools",
+    "fr": "Outils de Développement"
+  },
+  "level": {
+    "en": "Advanced",
+    "fr": "Avancé"
+  },
+  "keywords": [
+    "Git",
+    "Webpack",
+    "Vite",
+    "Jest",
+    "Testing Library",
+    "Storybook",
+    "CI/CD"
+  ]
+}

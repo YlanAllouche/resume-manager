@@ -1,0 +1,21 @@
+{
+  "institution": "University of New York",
+  "url": "https://www.nyu.edu",
+  "area": {
+    "en": "Interactive Media",
+    "fr": "Médias Interactifs"
+  },
+  "studyType": {
+    "en": "Bachelor of Fine Arts",
+    "fr": "Licence en Beaux-Arts"
+  },
+  "startDate": "2015-09-01",
+  "endDate": "2019-05-31",
+  "score": "3.9",
+  "courses": [
+    "Web Design Fundamentals",
+    "User Experience Design",
+    "Interactive Design",
+    "Digital Media Aesthetics"
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "organization": "Women Who Code",
+  "position": {
+    "en": "Frontend Workshop Lead",
+    "fr": "Leader d'Atelier Frontend"
+  },
+  "url": "https://www.womenwhocode.com",
+  "startDate": "2020-01-01",
+  "endDate": "2024-12-31",
+  "summary": {
+    "en": "Led workshops and mentored 30+ women entering tech careers in web development",
+    "fr": "Direction d'ateliers et mentorat de plus de 30 femmes entrant dans les carrières technologiques du développement web"
+  },
+  "highlights": [
+    {
+      "en": "Created comprehensive React learning curriculum",
+      "fr": "Création d'un programme d'apprentissage complet React"
+    },
+    {
+      "en": "Organized quarterly hackathons with 100+ participants",
+      "fr": "Organisation de hackathons trimestriels avec plus de 100 participants"
+    },
+    {
+      "en": "15 mentees successfully transitioned to frontend development roles",
+      "fr": "15 mentorés ont réussi à passer aux rôles de développeur frontend"
+    }
+  ]
+}

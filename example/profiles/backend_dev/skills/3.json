@@ -1,0 +1,17 @@
+{
+  "name": {
+    "en": "Architecture & Design",
+    "fr": "Architecture & Design"
+  },
+  "level": {
+    "en": "Advanced",
+    "fr": "Avancé"
+  },
+  "keywords": [
+    "System Design",
+    "Microservices Architecture",
+    "Event-Driven Design",
+    "SOLID Principles",
+    "Design Patterns"
+  ]
+}

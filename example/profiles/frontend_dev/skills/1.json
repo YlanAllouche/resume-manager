@@ -1,0 +1,19 @@
+{
+  "name": {
+    "en": "Languages & Tools",
+    "fr": "Langages & Outils"
+  },
+  "level": {
+    "en": "Expert",
+    "fr": "Expert"
+  },
+  "keywords": [
+    "TypeScript",
+    "JavaScript",
+    "HTML5",
+    "CSS3",
+    "SASS/SCSS",
+    "Tailwind CSS",
+    "GraphQL"
+  ]
+}

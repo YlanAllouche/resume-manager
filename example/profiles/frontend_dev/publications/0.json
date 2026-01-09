@@ -1,0 +1,13 @@
+{
+  "name": {
+    "en": "Building Accessible React Components: A Practical Guide",
+    "fr": "Construire des Composants React Accessibles: Un Guide Pratique"
+  },
+  "publisher": "CSS-Tricks",
+  "releaseDate": "2023-07-20",
+  "url": "https://css-tricks.com/accessible-components",
+  "summary": {
+    "en": "Comprehensive guide on implementing WCAG 2.1 standards in React applications with code examples",
+    "fr": "Guide complet sur l'implémentation des normes WCAG 2.1 dans les applications React avec des exemples de code"
+  }
+}
