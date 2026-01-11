@@ -7,7 +7,7 @@ vim.api.nvim_create_autocmd("BufWritePost", {
 		local file_path = event.file
 		local pdf_path = file_path:gsub("%.json$", ".pdf")
 
-		local cmd = string.format("resume export %s --resume %s --theme jsonresume-theme-awesomish", pdf_path, file_path)
+		local cmd = string.format("awesomish %s ", pdf_path, file_path)
 
 		vim.fn.jobstart(cmd, {
 			on_exit = function(_, exit_code)
