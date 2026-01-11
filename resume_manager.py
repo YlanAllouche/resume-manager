@@ -26,58 +26,21 @@ class ResumeManager:
         self.base_dir = Path(base_dir).resolve()
         self.profiles_dir = self.base_dir / "profiles"
         self.dist_dir = self.base_dir / "dist"
-        self.theme_dir = self._ensure_theme()
+        self._check_awesomish_available()
 
-    def _ensure_theme(self) -> Path:
-        theme_dir = self.base_dir / "node_modules" / "jsonresume-theme-awesomish"
-
-        if theme_dir.exists():
-            return theme_dir
-
-        print("Theme not found. Cloning jsonresume-theme-awesomish...")
-
+    def _check_awesomish_available(self) -> None:
+        """Check if the awesomish executable is available in PATH."""
         try:
-            theme_dir.parent.mkdir(parents=True, exist_ok=True)
             result = subprocess.run(
-                [
-                    "git",
-                    "clone",
-                    "https://github.com/ylanallouche/jsonresume-theme-awesomish.git",
-                    str(theme_dir),
-                ],
+                ["which", "awesomish"],
                 capture_output=True,
                 text=True,
-                timeout=60,
+                timeout=5,
             )
-
-            if result.returncode == 0:
-                print(f"Cloned theme to {theme_dir}")
-                self._install_dependencies(theme_dir)
-                return theme_dir
-            else:
-                print(f"Warning: Clone failed: {result.stderr}")
+            if result.returncode != 0:
+                print("Warning: awesomish executable not found in PATH")
         except Exception as e:
-            print(f"Warning: Could not clone theme: {e}")
-
-        return theme_dir
-
-    def _install_dependencies(self, theme_dir: Path) -> None:
-        for cmd in ["pnpm", "npm"]:
-            try:
-                result = subprocess.run(
-                    [cmd, "install"],
-                    cwd=str(theme_dir),
-                    capture_output=True,
-                    text=True,
-                    timeout=120,
-                )
-                if result.returncode == 0:
-                    print(f"Installed dependencies with {cmd}")
-                    return
-            except FileNotFoundError:
-                continue
-            except Exception as e:
-                print(f"Warning: {cmd} install failed: {e}")
+            print(f"Warning: Could not verify awesomish availability: {e}")
 
     def _load_json(self, path: Path) -> Dict[str, Any]:
         with open(path, "r", encoding="utf-8") as f:
@@ -281,6 +244,11 @@ class ResumeManager:
             resume, language, available_languages
         )
 
+        # Add meta.language field for theme localization
+        if "meta" not in resolved_resume:
+            resolved_resume["meta"] = {}
+        resolved_resume["meta"]["language"] = language
+
         name = resolved_resume.get("basics", {}).get("name", "Resume")
         name_parts = name.split()
 
@@ -308,48 +276,23 @@ class ResumeManager:
 
         self._save_json(json_path, resume)
 
-        if not self.theme_dir.exists():
-            print(f"Warning: Theme not found at {self.theme_dir}")
-            return
+        try:
+            result = subprocess.run(
+                ["awesomish", str(json_path)],
+                cwd=str(output_path_abs.parent),
+                capture_output=True,
+                text=True,
+                timeout=30,
+            )
 
-        theme_relative = "./" + str(self.theme_dir.relative_to(self.base_dir))
-
-        with tempfile.TemporaryDirectory() as temp_dir:
-            resume_path = Path(temp_dir) / "resume.json"
-            self._save_json(resume_path, resume)
-
-            for cmd in ["resume", "npx"]:
-                try:
-                    cmd_args = (
-                        ["resume", "export"]
-                        if cmd == "resume"
-                        else ["npx", "resume-cli", "export"]
-                    )
-                    result = subprocess.run(
-                        cmd_args
-                        + [
-                            str(output_path_abs) + ".pdf",
-                            "--resume",
-                            str(resume_path),
-                            "--theme",
-                            theme_relative,
-                        ],
-                        cwd=str(self.base_dir),
-                        capture_output=True,
-                        text=True,
-                        timeout=60 if cmd == "npx" else 30,
-                    )
-
-                    if result.returncode == 0:
-                        return
-                except FileNotFoundError:
-                    continue
-                except subprocess.TimeoutExpired:
-                    print("Warning: PDF generation timed out")
-                    return
-                except Exception as e:
-                    print(f"Warning: PDF generation error: {e}")
-                    return
+            if result.returncode != 0:
+                print(f"Warning: awesomish failed: {result.stderr}")
+        except FileNotFoundError:
+            print("Warning: awesomish executable not found in PATH")
+        except subprocess.TimeoutExpired:
+            print("Warning: PDF generation timed out")
+        except Exception as e:
+            print(f"Warning: PDF generation error: {e}")
 
 
 def main():

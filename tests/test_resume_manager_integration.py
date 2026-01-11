@@ -252,9 +252,22 @@ class TestPDFGeneration:
         assert "work" in resume
         assert len(resume["work"]) == 2
 
-    def test_integration_theme_installation(self, manager):
-        """Test that theme directory is properly set up."""
-        assert manager.theme_dir.exists()
+    def test_integration_meta_language_in_output(self, manager, temp_workspace):
+        """Test that meta.language field is included in generated JSONs."""
+        manager.build("backend_dev")
+
+        en_json = temp_workspace / "dist" / "backend_dev" / "en" / "SMITH-JOHN.json"
+        fr_json = temp_workspace / "dist" / "backend_dev" / "fr" / "SMITH-JEAN.json"
+
+        with open(en_json) as f:
+            en_resume = json.load(f)
+        with open(fr_json) as f:
+            fr_resume = json.load(f)
+
+        assert "meta" in en_resume
+        assert en_resume["meta"]["language"] == "en"
+        assert "meta" in fr_resume
+        assert fr_resume["meta"]["language"] == "fr"
 
 
 @pytest.mark.integration

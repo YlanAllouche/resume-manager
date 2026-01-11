@@ -212,20 +212,18 @@ def manager(temp_workspace):
 
 @pytest.fixture(autouse=True)
 def mock_pdf_generation():
-    """Mock the PDF generation and theme setup to avoid external dependencies."""
+    """Mock the PDF generation to avoid external dependencies."""
 
     def mock_generate_pdf(self, resume, output_path):
         output_path_abs = output_path.resolve()
         json_path = output_path_abs.parent / (output_path_abs.name + ".json")
         self._save_json(json_path, resume)
 
-    def mock_ensure_theme(self):
-        theme_dir = self.base_dir / "node_modules" / "jsonresume-theme-awesomish"
-        theme_dir.mkdir(parents=True, exist_ok=True)
-        return theme_dir
+    def mock_check_awesomish_available(self):
+        pass
 
     with patch.object(ResumeManager, "_generate_pdf", mock_generate_pdf), patch.object(
-        ResumeManager, "_ensure_theme", mock_ensure_theme
+        ResumeManager, "_check_awesomish_available", mock_check_awesomish_available
     ):
         yield
 
@@ -332,6 +330,23 @@ class TestBuildFunctionality:
     def test_build_nonexistent_profile(self, manager):
         """Test that building a nonexistent profile handles gracefully."""
         manager.build("nonexistent_profile")
+
+    def test_build_adds_meta_language_field(self, manager, temp_workspace):
+        """Test that build adds meta.language field for theme localization."""
+        manager.build("backend_dev")
+
+        en_path = temp_workspace / "dist" / "backend_dev" / "en" / "SMITH-JOHN.json"
+        with open(en_path) as f:
+            en_resume = json.load(f)
+
+        fr_path = temp_workspace / "dist" / "backend_dev" / "fr" / "SMITH-JEAN.json"
+        with open(fr_path) as f:
+            fr_resume = json.load(f)
+
+        assert "meta" in en_resume
+        assert en_resume["meta"]["language"] == "en"
+        assert "meta" in fr_resume
+        assert fr_resume["meta"]["language"] == "fr"
 
 
 class TestLanguageDetection:
