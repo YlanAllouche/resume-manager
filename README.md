@@ -61,9 +61,8 @@ Automatically generates both PDF and JSON files with language-specific translati
 - Output: `dist/<profile>/<language>/LASTNAME-FIRSTNAME.{pdf,json}`
 - Example: `dist/backend_dev/en/SMITH-JOHN.pdf`
 
-### Automatic Theme Setup
-Clones and installs the `jsonresume-theme-awesomish` theme automatically if not found.
-Uses pnpm if available otherwise defaults to npm and if neither are present simply builds it up with git manually.
+### PDF Generation
+Uses the `awesomish` executable (from `YlanAllouche/jsonresume-theme-awesomeish`) to generate PDF resumes from JSON. The executable must be available in your PATH.
 
 ## Directory structure to make it work
 
@@ -108,15 +107,18 @@ Uses pnpm if available otherwise defaults to npm and if neither are present simp
 
 ### Requirements
 - Python 3.8+
-- `git`, `npm` or `pnpm` (for theme dependencies)
-- `resume-cli` (automatic fallback to `npx resume-cli` if not installed globally)
+- `awesomish` executable in PATH
 
 ### Setup
 ```bash
-# Install resume-cli globally (optional, script can use npx)
-pnpm install -g resume-cli #opional
+# Clone the repository
+git clone https://github.com/YlanAllouche/jsonresume-theme-awesomeish
+cd jsonresume-theme-awesomeish
 
-# Run the script - it handles everything else
+# Install globally from local directory
+npm install -g .
+
+# Run the script
 python resume_manager.py
 ```
 
@@ -154,7 +156,7 @@ pytest tests/ -v
    - Loads `basics.json` if it exists
    - Merges all folders (work, education, skills, etc.) in numeric file order
 3. **Translation Resolution**: For each field, checks if it's a translation dict and applies language fallback logic
-4. **PDF Generation**: Merges all sections, resolves translations for the target language, and generates PDF via resume-cli with the awesomish theme
+4. **PDF Generation**: Merges all sections, resolves translations for the target language, and generates PDF using the awesomish executable
 5. **Naming**: Output files named `LASTNAME-FIRSTNAME.pdf` based on resolved `basics.name` for the target language
 
 
@@ -164,7 +166,7 @@ pytest tests/ -v
 - **Numeric File Order**: Merge order determined by filename (0.json before 1.json, etc.) - users can renumber to reorder
 - **Basics as Special Case**: Single `basics.json` file instead of a folder (it's an object, not an array)
 - **Smart Language Fallbacks**: Missing language → English → any available language
-- **Automatic Theme Setup**: No manual configuration needed
+- **External PDF Generator**: Uses awesomish executable for PDF generation
 - **Dual Output**: Every PDF has a matching JSON file with the same name
 - **In-Place Translations**: No separate translation files needed
 - **Default to All**: Builds all languages automatically (no need for `--all` flag)
